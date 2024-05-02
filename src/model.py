@@ -15,4 +15,5 @@ class SomeOtherStructure:
 
 
 #As alternative classes are added, the definition of RawData Type Alias can be expanded.
-RawData: TypeAlias | SomeOtherStructure
+#| SomeOtherStructure
+RawData = TypeAlias 
