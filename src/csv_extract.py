@@ -2,10 +2,10 @@ import sys
 import os
 
 
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+# sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 # This script will read the source documents and creeate model objects (see model.py)
-from src.model import RawData, XYPair
+from model import RawData, XYPair
 
 from abc import ABC, abstractmethod
 from pathlib import Path
