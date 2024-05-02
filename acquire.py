@@ -22,7 +22,7 @@ def get_options(argv: list[str]) -> argparse.Namespace:
 EXTRACT_CLASS: type[Extract] = Extract
 BUILDER_CLASSES: list[type[PairBuilder]] = [Series1PairBuilder, Series2PairBuilder, Series3PairBuilder, Series4PairBuilder]
 
-def main():
+def main(argv: list[str]) -> None:
     builders = [cls for cls in BUILDER_CLASSES]
     extractor = EXTRACT_CLASS(builders)
 
@@ -54,4 +54,5 @@ def main():
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
     # calls main logic
-    main()
+    args = ["-o", "target", "data/data1.csv"]
+    main(args)

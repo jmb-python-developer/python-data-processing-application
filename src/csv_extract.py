@@ -1,5 +1,5 @@
 # This script will read the source documents and creeate model objects (see model.py)
-from model import RawData, XYPair
+from src.model import RawData, XYPair
 
 from abc import ABC, abstractmethod
 from pathlib import Path
@@ -51,8 +51,11 @@ class Extract:
         self.builders = builders
 
     def build_pairs(self, row: list[str]) -> list[RawData]:
+        pairs_list: list[RawData] = [] 
         # Lambda to build PairBuilder objects and return XYPair objects built
-        return [bldr.from_row(row) for bldr in self.builders]
+        for builder in self.builders:
+            pairs_list.append(builder.from_row(row))
+        return pairs_list
     
 # Simple Unit Test just for XYPair of type 1
 def test_series1Pair() -> None:
