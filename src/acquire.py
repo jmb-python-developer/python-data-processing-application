@@ -26,33 +26,29 @@ def get_options(argv: list[str]) -> argparse.Namespace:
 
 EXTRACT_CLASS: type[Extract] = Extract
 BUILDER_CLASSES: list[type[PairBuilder]] = [Series1PairBuilder, Series2PairBuilder, Series3PairBuilder, Series4PairBuilder]
+def write_pairs_to_files(builders, target_files, row):
+    for i, builder in enumerate(builders):
+        pair = builder.from_row(row)
+        json_data = json.dumps(asdict(pair)) + '\n'
+        target_files[i].write(json_data)
 
 def main(argv: list[str] = ["-o", "target", "data/data1.csv"]) -> None:
-    builders = [cls for cls in BUILDER_CLASSES]
+    builders = [cls() for cls in BUILDER_CLASSES]
     extractor = EXTRACT_CLASS(builders)
 
     options = get_options(argv)
 
     targets = [
-        options.output / "Series_1.ndjson",
-        options.output / "Series_2.ndjson",
-        options.output / "Series_3.ndjson",
-        options.output / "Series_4.ndjson",
+        options.output / f"Series_{i+1}.ndjson" for i in range(len(builders))
     ]
 
-    target_files = [
-        target.open('w') for target in targets
-    ]
+    target_files = [target.open('w') for target in targets]
 
-    for source in options.source:
-        # source can default
-        with source.open() as source:
-            rdr = csv.reader(source)
-            for row in rdr:
-                #zip yields Tuples until input is exhausted
-                for pair, wtr in zip(extractor.build_pairs(row), target_files):
-                    wtr.write(json.dumps(asdict(pair)) + '\n')
-    
+    with options.source[0].open() as source:
+        rdr = csv.reader(source)
+        for row in rdr:
+            write_pairs_to_files(extractor.builders, target_files, row)
+
     for target in target_files:
         target.close()
 
