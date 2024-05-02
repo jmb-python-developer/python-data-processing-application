@@ -1,4 +1,9 @@
 # Will hold function to parse CLI arguments AND main() function to parse options and log statements
+import sys
+import os
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
 import logging
 import argparse
 from src.csv_extract import *
@@ -45,8 +50,8 @@ def main(argv: list[str]) -> None:
             rdr = csv.reader(source)
             for row in rdr:
                 #zip yields Tuples until input is exhausted
-                for row, wtr in zip(extractor.build_pairs(row), target_files):
-                    wtr.write(json.dumps(asdict(row)) + '\n')
+                for pair, wtr in zip(extractor.build_pairs(row), target_files):
+                    wtr.write(json.dumps(asdict(pair)) + '\n')
     
     for target in target_files:
         target.close()
