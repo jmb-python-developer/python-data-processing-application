@@ -1,7 +1,12 @@
 # Will hold function to parse CLI arguments AND main() function to parse options and log statements
+import sys
+import os
+
+# sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
 import logging
 import argparse
-from src.csv_extract import *
+from csv_extract import *
 from dataclasses import asdict
 import json
 from pathlib import Path
@@ -22,7 +27,7 @@ def get_options(argv: list[str]) -> argparse.Namespace:
 EXTRACT_CLASS: type[Extract] = Extract
 BUILDER_CLASSES: list[type[PairBuilder]] = [Series1PairBuilder, Series2PairBuilder, Series3PairBuilder, Series4PairBuilder]
 
-def main(argv: list[str]) -> None:
+def main(argv: list[str] = ["-o", "target", "data/data1.csv"]) -> None:
     builders = [cls for cls in BUILDER_CLASSES]
     extractor = EXTRACT_CLASS(builders)
 
@@ -45,14 +50,12 @@ def main(argv: list[str]) -> None:
             rdr = csv.reader(source)
             for row in rdr:
                 #zip yields Tuples until input is exhausted
-                for row, wtr in zip(extractor.build_pairs(row), target_files):
-                    wtr.write(json.dumps(asdict(row)) + '\n')
+                for pair, wtr in zip(extractor.build_pairs(row), target_files):
+                    wtr.write(json.dumps(asdict(pair)) + '\n')
     
     for target in target_files:
         target.close()
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
-    # calls main logic
-    args = ["-o", "target", "data/data1.csv"]
-    main(args)
+    main()

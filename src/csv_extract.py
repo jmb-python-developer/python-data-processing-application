@@ -1,5 +1,11 @@
+import sys
+import os
+
+
+# sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
 # This script will read the source documents and creeate model objects (see model.py)
-from src.model import RawData, XYPair
+from model import RawData, XYPair
 
 from abc import ABC, abstractmethod
 from pathlib import Path
@@ -51,11 +57,8 @@ class Extract:
         self.builders = builders
 
     def build_pairs(self, row: list[str]) -> list[RawData]:
-        pairs_list: list[RawData] = [] 
         # Lambda to build PairBuilder objects and return XYPair objects built
-        for builder in self.builders:
-            pairs_list.append(builder.from_row(row))
-        return pairs_list
+        return [bldr.from_row(row) for bldr in self.builders]
     
 # Simple Unit Test just for XYPair of type 1
 def test_series1Pair() -> None:
@@ -71,3 +74,4 @@ def test_series1Pair() -> None:
     assert mock_raw_class.mock_calls == [
         call(sentinel.X, sentinel.Y)
     ]
+
